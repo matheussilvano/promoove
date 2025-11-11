@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas.AI — Admin</title>
+  <style>
+    /* =============================
+       🎨 Paleta inspirada no pitch
+       ============================= */
+    :root{
+      --bg:#fafafa;           /* fundo claro */
+      --surface:#ffffff;      /* cartões */
+      --text:#0e2442;         /* primário (azul bem escuro) */
+      --muted:#6b7a90;        /* texto secundário */
+      --brand:#17416b;        /* azul Atlas */
+      --accent:#3bcac3;       /* ciano/teal Atlas */
+      --highlight:#ea9851;    /* laranja detalhe */
+      --ok:#22c55e;           /* verde */
+      --danger:#ef4444;       /* vermelho */
+      --shadow: 0 10px 30px rgba(23,65,107,.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.5 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+
+    /* Header */
+    .appbar{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(90deg,var(--brand), #0f2c4d);
+      color:#fff;border:0;box-shadow:var(--shadow);
+    }
+    .appbar-inner{max-width:1200px;margin:auto;display:flex;align-items:center;gap:16px;padding:14px 20px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo-badge{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7ff7f1);display:grid;place-items:center;color:#003a46;font-weight:900;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+    .logo h1{font-size:18px;letter-spacing:.5px;margin:0}
+    .chip{margin-left:auto;background:rgba(255,255,255,.14);color:#e6f9ff;border:1px solid rgba(255,255,255,.22);padding:6px 10px;border-radius:999px;font-size:13px}
+
+    /* Layout */
+    .container{max-width:1200px;margin:26px auto;padding:0 20px}
+    .grid{display:grid;gap:18px}
+    .grid-3{grid-template-columns:repeat(12,1fr)}
+
+    /* KPI cards */
+    .card{background:var(--surface);border:1px solid rgba(15,45,70,.06);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .kpi{padding:18px}
+    .kpi h3{margin:0 0 6px;font-size:14px;color:var(--muted);font-weight:600}
+    .kpi .val{font-size:28px;font-weight:800;letter-spacing:.2px}
+    .kpi .hint{font-size:13px;color:var(--muted)}
+
+    /* Search / Actions */
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .input, .button{height:44px;border-radius:12px;border:1px solid rgba(23,65,107,.12);padding:0 14px;background:#fff}
+    .input{min-width:260px;flex:1}
+    .button{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:#093358;cursor:pointer;user-select:none}
+    .button.brand{background:linear-gradient(135deg,var(--accent),#8df0ea);border:0;color:#064043}
+    .button.ghost{background:#fff}
+    .button:hover{box-shadow:var(--shadow)}
+
+    /* Team list */
+    .section-title{display:flex;align-items:center;gap:10px;margin:24px 0 10px}
+    .section-title h2{margin:0;font-size:18px}
+    .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .member{padding:14px;display:grid;gap:12px}
+    .row{display:flex;align-items:center;gap:12px}
+    .avatar{width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid rgba(23,65,107,.15)}
+    .name{font-weight:800}
+    .role{font-size:13px;color:var(--muted)}
+    .points{display:flex;align-items:center;justify-content:space-between}
+    .bar{height:10px;background:rgba(23,65,107,.08);border-radius:999px;overflow:hidden}
+    .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--highlight), #ffd59f)}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(23,65,107,.06);font-size:13px}
+    .rank{background:linear-gradient(90deg,var(--brand),#0f2c4d);color:#fff}
+
+    /* Ask panel */
+    .ask{display:grid;gap:10px;padding:16px}
+    .ask textarea{width:100%;min-height:88px;border-radius:14px;border:1px solid rgba(23,65,107,.12);padding:12px;font:500 15px/1.5 inherit}
+    .answer{padding:12px;background:linear-gradient(0deg,#f7fbff,#ffffff);border:1px dashed rgba(23,65,107,.18);border-radius:14px;white-space:pre-wrap}
+
+    /* Footer */
+    .footer{color:var(--muted);font-size:13px;margin:26px auto;max-width:1200px;padding:0 20px}
+
+    @media (min-width:800px){
+      .grid-3{display:grid}
+      .kpi-1{grid-column:span 4}
+      .kpi-2{grid-column:span 4}
+      .kpi-3{grid-column:span 4}
+    }
+  </style>
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar-inner">
+      <div class="logo">
+        <div class="logo-badge">A</div>
+        <h1>Atlas.AI • Admin</h1>
+      </div>
+      <div class="chip">HRTech • Gamificação nativa • Brasil‑first</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- KPIs -->
+    <section class="grid grid-3">
+      <div class="card kpi kpi-1">
+        <h3>Pontos totais</h3>
+        <div class="val" id="kpi-total">—</div>
+        <div class="hint" id="kpi-top">Top 1: —</div>
+      </div>
+      <div class="card kpi kpi-2">
+        <h3>Membros</h3>
+        <div class="val" id="kpi-members">—</div>
+        <div class="hint">Equipe Atlas.AI</div>
+      </div>
+      <div class="card kpi kpi-3">
+        <h3>Consultas de talento (hoje)</h3>
+        <div class="val" id="kpi-queries">0</div>
+        <div class="hint">via IA • localhost:8000</div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section style="margin-top:18px" class="card" id="actions">
+      <div style="padding:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input class="input" id="search" placeholder="Pesquisar por nome, cargo ou competência..." />
+        <button class="button ghost" id="sortPoints">Ordenar por pontos</button>
+        <button class="button ghost" id="shuffle">Sortear destaque</button>
+        <button class="button brand" id="addDemoPoints">+50 pts para todos (demo)</button>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section-title">
+      <h2>Equipe</h2>
+      <span class="pill" id="visibleCount">—</span>
+    </section>
+    <section class="team" id="team"></section>
+
+    <!-- Ask the AI -->
+    <section class="section-title" style="margin-top:24px">
+      <h2>Consulta inteligente (IA)</h2>
+      <span class="pill">Ex.: "Tenho a vaga de DEV Python aberta — quem é o melhor?"</span>
+    </section>
+    <section class="card ask">
+      <textarea id="question" placeholder="Descreva a vaga/perfil desejado..."></textarea>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="button brand" id="askBtn">Perguntar à Atlas.AI</button>
+        <button class="button ghost" id="clearBtn">Limpar</button>
+      </div>
+      <div class="answer" id="answer" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">© Atlas.AI — Gamificação, reconhecimento e descoberta de talentos internos.</footer>
+
+  <script>
+    // =============================
+    // 🔌 Config
+    // =============================
+    const API_URL = "http://localhost:8000/perguntar"; // FastAPI
+    const EQUIPE_JSON_URL = "./equipe.json";           // mesmo diretório
+
+    // Estado em memória
+    let members = [];      // carregados do equipe.json
+    let points = {};       // mapa nome -> pontos
+    let queriesToday = 0;
+
+    // Utilitários
+    const el = (sel) => document.querySelector(sel);
+    const uiAvatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=256&rounded=true&background=17416b&color=fff`;
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTeam();
+      bindActions();
+      render();
+    });
+
+    async function loadTeam(){
+      try{
+        const res = await fetch(EQUIPE_JSON_URL, {cache:'no-store'});
+        if(!res.ok) throw new Error('Falha ao carregar equipe.json');
+        const data = await res.json();
+        members = data.equipe || [];
+
+        // Inicializa pontos de forma determinística a partir do nome
+        for(const m of members){
+          points[m.nome] = seededScore(m.nome);
+        }
+      }catch(e){
+        console.warn(e);
+        // Fallback mínimo caso equipe.json não esteja junto
+        members = [
+          {nome:'Matheus Silvano', cargo:'Desenvolvedor de IA', competencias:['Inteligência Artificial','Automação com Python']},
+          {nome:'Ana Machado', cargo:'Negócios e Marketing', competencias:['UX','Figma','Design Thinking']},
+          {nome:'Eduardo', cargo:'Desenvolvedor Back-end', competencias:['Node.js','APIs','SQL']},
+          {nome:'Matheus Piccoli', cargo:'Desenvolvedor Back-end', competencias:['Node.js','Estatística']},
+          {nome:'Felipe Probst', cargo:'Desenvolvedor Front-end', competencias:['UX','Ágil']},
+          {nome:'Guilherme Mulatinho', cargo:'Cientista de Dados', competencias:['Python','Análise de Dados','R']},
+        ];
+        for(const m of members){ points[m.nome] = seededScore(m.nome); }
+      }
+    }
+
+    function seededScore(seed){
+      // Gera 500–1200 pontos pseudo-determinísticos a partir do nome
+      let h = 0; for(let i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i)) >>> 0;
+      return 500 + (h % 701); // 500..1200
+    }
+
+    function bindActions(){
+      el('#search').addEventListener('input', render);
+      el('#sortPoints').addEventListener('click', () => { members.sort((a,b)=> (points[b.nome]||0)-(points[a.nome]||0)); render(); });
+      el('#shuffle').addEventListener('click', () => { members.sort(()=> Math.random()-.5); render(); });
+      el('#addDemoPoints').addEventListener('click', () => { for(const n of Object.keys(points)) points[n]+=50; render(); });
+      el('#askBtn').addEventListener('click', askAI);
+      el('#clearBtn').addEventListener('click', () => { el('#question').value=''; el('#answer').hidden=true; });
+    }
+
+    function render(){
+      const q = el('#search').value?.toLowerCase()||'';
+      const list = members.filter(m =>
+        !q || m.nome.toLowerCase().includes(q) ||
+        (m.cargo||'').toLowerCase().includes(q) ||
+        (m.competencias||[]).join(' ').toLowerCase().includes(q)
+      );
+
+      // KPIs
+      el('#kpi-members').textContent = members.length;
+      const sum = Object.values(points).reduce((a,b)=>a+b,0);
+      el('#kpi-total').textContent = sum.toLocaleString('pt-BR') + ' pts';
+      const top = [...members].sort((a,b)=> (points[b.nome]||0)-(points[a.nome]||0))[0];
+      el('#kpi-top').textContent = top? `Top 1: ${top.nome} (${points[top.nome]} pts)`: 'Top 1: —';
+      el('#visibleCount').textContent = `${list.length} visíveis`;
+
+      // Cards
+      const wrap = el('#team');
+      wrap.innerHTML = '';
+      for(const m of list){
+        const p = points[m.nome]||0;
+        const pct = Math.min(100, Math.round((p/1200)*100));
+        const card = document.createElement('article');
+        card.className = 'card member';
+        card.innerHTML = `
+          <div class="row">
+            <img class="avatar" alt="${m.nome}" src="${uiAvatar(m.nome)}"/>
+            <div style="flex:1">
+              <div class="name">${m.nome}</div>
+              <div class="role">${m.cargo || ''}</div>
+            </div>
+            <span class="pill rank">${p} pts</span>
+          </div>
+          <div>
+            <div class="bar"><span style="width:${pct}%"></span></div>
+          </div>
+          <div class="row" style="justify-content:space-between">
+            <div class="role" title="Competências">${(m.competencias||[]).slice(0,4).join(' • ')}</div>
+            <div style="display:flex; gap:8px">
+              <button class="button ghost" style="height:36px" onclick="addPoints('${m.nome}', 25)">+25</button>
+              <button class="button ghost" style="height:36px" onclick="addPoints('${m.nome}', 100)">+100</button>
+            </div>
+          </div>
+        `;
+        wrap.appendChild(card);
+      }
+    }
+
+    function addPoints(name, delta){
+      points[name] = (points[name]||0) + delta;
+      render();
+    }
+
+    async function askAI(){
+      const q = el('#question').value.trim();
+      if(!q){ el('#question').focus(); return; }
+      const btn = el('#askBtn');
+      const ans = el('#answer');
+      btn.disabled = true; btn.textContent = 'Consultando...';
+      ans.hidden = false; ans.textContent = 'Processando com a IA...';
+      try{
+        const res = await fetch(API_URL, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({pergunta:q})
+        });
+        if(!res.ok) throw new Error('Falha na consulta');
+        const data = await res.json();
+        queriesToday++;
+        el('#kpi-queries').textContent = String(queriesToday);
+        ans.textContent = data.resposta || '(sem resposta)';
+      }catch(e){
+        ans.textContent = 'Erro ao consultar a IA. Verifique se a API em http://localhost:8000 está ativa e com CORS liberado.';
+      }finally{
+        btn.disabled = false; btn.textContent = 'Perguntar à Atlas.AI';
+      }
+    }
+  </script>
+</body>
+</html>
