@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,11 +20,62 @@
       --danger:#ef4444;       /* vermelho */
       --shadow: 0 10px 30px rgba(23,65,107,.08);
       --radius:18px;
+
+      --gold1:#f6d365; --gold2:#fda085;
+      --silver1:#d7dde8; --silver2:#757f9a;
+      --bronze1:#d1913c; --bronze2:#ffd194;
+      --rankBG:#0f2c4d;
+
+      /* Cores de borda e inputs */
+      --border-color: rgba(15,45,70,.06);
+      --input-bg: #fff;
+      --input-border: rgba(23,65,107,.12);
     }
+
+    /* =============================
+       🌙 Modo Escuro
+       ============================= */
+    html[data-theme="dark"]{
+      --bg:#0f2c4d;
+      --surface:#17416b;
+      --text:#f0f8ff;
+      --muted:#8cb2d9;
+      --shadow: 0 10px 30px rgba(0,0,0,.2);
+      
+      --border-color: rgba(255,255,255,.1);
+      --input-bg: #0f2c4d;
+      --input-border: rgba(255,255,255,.15);
+    }
+
 
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.5 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:500 16px/1.5 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* =============================
+       ✨ Animações
+       ============================= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes highlight {
+      0%   { background-color: var(--highlight-bg, #ea985144); transform: scale(1.05); }
+      100% { background-color: transparent; transform: scale(1); }
+    }
+    
+    .updated {
+      /* Aplicada via JS para destacar KPIs atualizados */
+      animation: highlight 0.7s ease;
+      border-radius: 8px;
+    }
 
     /* Header */
     .appbar{
@@ -37,6 +88,17 @@
     .logo-badge{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7ff7f1);display:grid;place-items:center;color:#003a46;font-weight:900;box-shadow:0 6px 16px rgba(0,0,0,.15)}
     .logo h1{font-size:18px;letter-spacing:.5px;margin:0}
     .chip{margin-left:auto;background:rgba(255,255,255,.14);color:#e6f9ff;border:1px solid rgba(255,255,255,.22);padding:6px 10px;border-radius:999px;font-size:13px}
+    
+    .theme-toggle{
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid; place-items: center;
+      margin-left: 10px;
+    }
 
     /* Layout */
     .container{max-width:1200px;margin:26px auto;padding:0 20px}
@@ -44,49 +106,239 @@
     .grid-3{grid-template-columns:repeat(12,1fr)}
 
     /* KPI cards */
-    .card{background:var(--surface);border:1px solid rgba(15,45,70,.06);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border-color);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
     .kpi{padding:18px}
     .kpi h3{margin:0 0 6px;font-size:14px;color:var(--muted);font-weight:600}
-    .kpi .val{font-size:28px;font-weight:800;letter-spacing:.2px}
+    .kpi .val{font-size:28px;font-weight:800;letter-spacing:.2px; display: inline-block;}
     .kpi .hint{font-size:13px;color:var(--muted)}
 
     /* Search / Actions */
     .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .input, .button{height:44px;border-radius:12px;border:1px solid rgba(23,65,107,.12);padding:0 14px;background:#fff}
+    .input, .button{
+      height:44px;border-radius:12px;
+      border:1px solid var(--input-border);
+      padding:0 14px;
+      background:var(--input-bg);
+      color: var(--text);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
     .input{min-width:260px;flex:1}
-    .button{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:#093358;cursor:pointer;user-select:none}
-    .button.brand{background:linear-gradient(135deg,var(--accent),#8df0ea);border:0;color:#064043}
-    .button.ghost{background:#fff}
-    .button:hover{box-shadow:var(--shadow)}
+    .button{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:var(--brand);cursor:pointer;user-select:none}
+    
+    html[data-theme="dark"] .button.ghost { color: var(--text); }
 
-    /* Team list */
+    .button.brand{background:linear-gradient(135deg,var(--accent),#8df0ea);border:0;color:#064043}
+    .button.ghost{background:var(--input-bg)}
+    .button:hover{
+      box-shadow:var(--shadow);
+      transform: scale(1.03);
+    }
+    .button:active { transform: scale(0.98); }
+
+    /* Ranking */
     .section-title{display:flex;align-items:center;gap:10px;margin:24px 0 10px}
     .section-title h2{margin:0;font-size:18px}
+    .ranking{display:grid;grid-template-columns:1fr;gap:10px;padding:14px}
+    .rank-item{
+      display:flex;align-items:center;gap:12px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--border-color);
+      background:linear-gradient(0deg,#f7fbff,#ffffff);
+      animation: fadeIn 0.4s ease forwards;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .rank-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    html[data-theme="dark"] .rank-item {
+      background: linear-gradient(0deg,#17416b,#1a4a75);
+    }
+    .rank-pos{
+      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+      color:var(--text);font-weight:900;
+      border:1px solid var(--input-border);
+      background:var(--input-bg);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .rank-medal{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#09202f;font-weight:900}
+    .medal-gold{background:linear-gradient(135deg,var(--gold1),var(--gold2))}
+    .medal-silver{background:linear-gradient(135deg,var(--silver1),var(--silver2));color:#0a1a2b}
+    .medal-bronze{background:linear-gradient(135deg,var(--bronze1),var(--bronze2))}
+    .rank-name{font-weight:800}
+    .rank-points{margin-left:auto;background:linear-gradient(90deg,var(--rankBG),#1b4770);color:#fff;padding:6px 10px;border-radius:999px;font-size:13px}
+    .rank-avatar{width:40px;height:40px;border-radius:12px;border:2px solid rgba(23,65,107,.12);object-fit:cover}
+
+    /* Team list */
     .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-    .member{padding:14px;display:grid;gap:12px}
+    .member{
+      padding:14px;display:grid;gap:12px;
+      animation: fadeIn 0.4s ease forwards;
+    }
     .row{display:flex;align-items:center;gap:12px}
     .avatar{width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid rgba(23,65,107,.15)}
     .name{font-weight:800}
     .role{font-size:13px;color:var(--muted)}
     .points{display:flex;align-items:center;justify-content:space-between}
     .bar{height:10px;background:rgba(23,65,107,.08);border-radius:999px;overflow:hidden}
+    html[data-theme="dark"] .bar { background: rgba(255,255,255,.1); }
     .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--highlight), #ffd59f)}
-    .pill{padding:6px 10px;border-radius:999px;background:rgba(23,65,107,.06);font-size:13px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(23,65,107,.06);font-size:13px; display: inline-block;}
+    html[data-theme="dark"] .pill { background: rgba(255,255,255,.1); }
     .rank{background:linear-gradient(90deg,var(--brand),#0f2c4d);color:#fff}
 
     /* Ask panel */
     .ask{display:grid;gap:10px;padding:16px}
-    .ask textarea{width:100%;min-height:88px;border-radius:14px;border:1px solid rgba(23,65,107,.12);padding:12px;font:500 15px/1.5 inherit}
-    .answer{padding:12px;background:linear-gradient(0deg,#f7fbff,#ffffff);border:1px dashed rgba(23,65,107,.18);border-radius:14px;white-space:pre-wrap}
+    .ask textarea{
+      width:100%;min-height:88px;border-radius:14px;
+      border:1px solid var(--input-border);
+      padding:12px;font:500 15px/1.5 inherit;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .answer{
+      padding:12px;
+      background:linear-gradient(0deg,#f7fbff,#ffffff);
+      border:1px dashed rgba(23,65,107,.18);
+      border-radius:14px;white-space:pre-wrap;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    html[data-theme="dark"] .answer {
+      background: var(--input-bg);
+      border-color: rgba(255,255,255,.25);
+    }
 
     /* Footer */
     .footer{color:var(--muted);font-size:13px;margin:26px auto;max-width:1200px;padding:0 20px}
+
+    /* =============================
+       NOVOS ESTILOS - FEED & MODAL
+       ============================= */
+    #view-toggle {
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
+    }
+    #view-toggle:hover {
+      background: rgba(255,255,255,.25);
+    }
+
+    #collaborator-view {
+      max-width: 700px; /* Layout de feed, mais estreito */
+    }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-content {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-header h2 { margin: 0; font-size: 20px; }
+    #modal-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--border-color);
+      border: 0; color: var(--muted);
+      cursor: pointer;
+    }
+    html[data-theme="dark"] #modal-close { background: var(--input-bg); }
+
+    .modal-options {
+      display: grid;
+      gap: 10px;
+    }
+    .post-option {
+      /* Reusa .button, mas com alinhamento à esquerda */
+      justify-content: flex-start;
+      text-align: left;
+      height: auto;
+      min-height: 44px;
+      line-height: 1.4;
+      padding: 10px 14px;
+      white-space: normal;
+    }
+    .post-option small {
+      font-weight: 500;
+      color: var(--muted);
+      margin-left: auto;
+    }
+    
+    #feed-container {
+      display: grid;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .feed-item {
+      padding: 16px;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .feed-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .feed-avatar {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid rgba(23,65,107,.15);
+    }
+    .feed-name { font-weight: 800; }
+    .feed-role { font-size: 13px; color: var(--muted); margin-top: -2px; }
+    
+    .feed-content h3 {
+      font-size: 18px;
+      margin: 0 0 4px;
+    }
+    .feed-content p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .feed-points {
+      margin-top: 14px;
+      display: inline-block;
+      background: linear-gradient(135deg, var(--highlight), #fdb475);
+      color: #5d340a;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
 
     @media (min-width:800px){
       .grid-3{display:grid}
       .kpi-1{grid-column:span 4}
       .kpi-2{grid-column:span 4}
       .kpi-3{grid-column:span 4}
+      /* Alterado para Top 3 */
+      .ranking{grid-template-columns:repeat(3, 1fr)} 
     }
   </style>
 </head>
@@ -95,65 +347,119 @@
     <div class="appbar-inner">
       <div class="logo">
         <div class="logo-badge">A</div>
-        <h1>Atlas.AI • Admin</h1>
+        <h1>Atlas.AI</h1>
       </div>
-      <div class="chip">HRTech • Gamificação nativa • Brasil‑first</div>
+      <div class="chip" id="view-toggle" title="Trocar visão">
+        Visão: Colaborador (clique p/ mudar)
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Mudar tema">🌙</button>
     </div>
   </header>
 
-  <main class="container">
-    <!-- KPIs -->
-    <section class="grid grid-3">
-      <div class="card kpi kpi-1">
-        <h3>Pontos totais</h3>
-        <div class="val" id="kpi-total">—</div>
-        <div class="hint" id="kpi-top">Top 1: —</div>
-      </div>
-      <div class="card kpi kpi-2">
-        <h3>Membros</h3>
-        <div class="val" id="kpi-members">—</div>
-        <div class="hint">Equipe Atlas.AI</div>
-      </div>
-      <div class="card kpi kpi-3">
-        <h3>Consultas de talento (hoje)</h3>
-        <div class="val" id="kpi-queries">0</div>
-        <div class="hint">via IA • localhost:8000</div>
-      </div>
-    </section>
+  <div id="admin-view" style="display:none;">
+    <main class="container">
+      <section class="grid grid-3">
+        <div class="card kpi kpi-1">
+          <h3>Pontos totais</h3>
+          <div class="val" id="kpi-total">—</div>
+          <div class="hint" id="kpi-top">Top 1: —</div>
+        </div>
+        <div class="card kpi kpi-2">
+          <h3>Membros</h3>
+          <div class="val" id="kpi-members">—</div>
+          <div class="hint">Equipe Atlas.AI</div>
+        </div>
+        <div class="card kpi kpi-3">
+          <h3>Consultas de talento (hoje)</h3>
+          <div class="val" id="kpi-queries">0</div>
+          <div class="hint">via IA • localhost:8000</div>
+        </div>
+      </section>
 
-    <!-- Actions -->
-    <section style="margin-top:18px" class="card" id="actions">
-      <div style="padding:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
-        <input class="input" id="search" placeholder="Pesquisar por nome, cargo ou competência..." />
-        <button class="button ghost" id="sortPoints">Ordenar por pontos</button>
-        <button class="button ghost" id="shuffle">Sortear destaque</button>
-        <button class="button brand" id="addDemoPoints">+50 pts para todos (demo)</button>
-      </div>
-    </section>
+      <section class="section-title" style="margin-top:18px">
+        <h2>🏆 Ranking Top 3</h2>
+        <span class="pill" id="rankLastUpdate">—</span>
+      </section>
+      <section class="card ranking" id="ranking"></section>
 
-    <!-- Team -->
-    <section class="section-title">
-      <h2>Equipe</h2>
-      <span class="pill" id="visibleCount">—</span>
-    </section>
-    <section class="team" id="team"></section>
+      <section style="margin-top:18px" class="card" id="actions">
+        <div style="padding:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+          <input class="input" id="search" placeholder="Pesquisar por nome, cargo ou competência..." />
+          <button class="button ghost" id="sortPoints">Ordenar por pontos</button>
+          <button class="button ghost" id="shuffle">Sortear destaque</button>
+          <button class="button brand" id="addDemoPoints">+50 pts para todos (demo)</button>
+        </div>
+      </section>
 
-    <!-- Ask the AI -->
-    <section class="section-title" style="margin-top:24px">
-      <h2>Consulta inteligente (IA)</h2>
-      <span class="pill">Ex.: "Tenho a vaga de DEV Python aberta — quem é o melhor?"</span>
-    </section>
-    <section class="card ask">
-      <textarea id="question" placeholder="Descreva a vaga/perfil desejado..."></textarea>
-      <div style="display:flex; gap:10px; flex-wrap:wrap">
-        <button class="button brand" id="askBtn">Perguntar à Atlas.AI</button>
-        <button class="button ghost" id="clearBtn">Limpar</button>
+      <section class="section-title">
+        <h2>Equipe</h2>
+        <span class="pill" id="visibleCount">—</span>
+      </section>
+      <section class="team" id="team"></section>
+
+      <section class="section-title" style="margin-top:24px">
+        <h2>Consulta inteligente (IA)</h2>
+        <span class="pill">Ex.: "Tenho a vaga de DEV Python aberta — quem é o melhor?"</span>
+      </section>
+      <section class="card ask">
+        <textarea id="question" placeholder="Descreva a vaga/perfil desejado..."></textarea>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <button class="button brand" id="askBtn">Perguntar à Atlas.AI</button>
+          <button class="button ghost" id="clearBtn">Limpar</button>
+        </div>
+        <div class="answer" id="answer" hidden></div>
+      </section>
+    </main>
+
+    <footer class="footer">© Atlas.AI — Gamificação, reconhecimento e descoberta de talentos internos.</footer>
+  </div>
+
+
+  <main id="collaborator-view" class="container">
+    <button class="button brand" id="showPostModalBtn" style="width:100%; height: 50px; font-size: 16px;">
+      🚀 Criar Postagem
+    </button>
+    
+    <div id="feed-container">
       </div>
-      <div class="answer" id="answer" hidden></div>
-    </section>
   </main>
 
-  <footer class="footer">© Atlas.AI — Gamificação, reconhecimento e descoberta de talentos internos.</footer>
+
+  <div id="post-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>O que você gostaria de registrar?</h2>
+        <button id="modal-close" title="Fechar">✕</button>
+      </div>
+      <div class="modal-options">
+        <button class="button ghost post-option" data-type="course" data-points="50" data-prompt="Qual o nome do curso/certificação?">
+          🎓 Concluí um novo curso/certificação
+          <small>+50 pts</small>
+        </button>
+        <button class="button ghost post-option" data-type="education_start" data-points="75" data-prompt="Qual o nome da sua graduação/pós?">
+          🌱 Comecei uma nova fase acadêmica
+          <small>+75 pts</small>
+        </button>
+        <button class="button ghost post-option" data-type="education_end" data-points="150" data-prompt="Parabéns! Qual curso você concluiu?">
+          🎉 Terminei a faculdade/pós-graduação
+          <small>+150 pts</small>
+        </button>
+        <button class="button ghost post-option" data-type="book" data-points="30" data-prompt="Qual o nome do livro que você leu?">
+          📚 Terminei um livro
+          <small>+30 pts</small>
+        </button>
+        <button class="button ghost post-option" data-type="event_participant" data-points="40" data-prompt="Qual o nome do evento?">
+          🎟️ Fui em um evento como participante
+          <small>+40 pts</small>
+        </button>
+        <button class="button ghost post-option" data-type="event_speaker" data-points="200" data-prompt="Incrível! Qual foi o evento/palestra?">
+          🎙️ Fui em um evento como palestrante
+          <small>+200 pts</small>
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <script>
     // =============================
@@ -166,16 +472,46 @@
     let members = [];      // carregados do equipe.json
     let points = {};       // mapa nome -> pontos
     let queriesToday = 0;
+    
+    // ✅ NOVO ESTADO
+    let currentView = 'colaborator'; // 'admin' ou 'colaborator'
+    let feedPosts = [];    // Array de postagens do feed
+    let DEMO_USER_NAME = ''; // Nome do usuário que fará as postagens (definido após loadTeam)
 
     // Utilitários
     const el = (sel) => document.querySelector(sel);
+    
+    /**
+     * Atualiza o textContent de um nó e adiciona uma classe 'updated'
+     * para disparar animações CSS.
+     */
+    function updateText(selector, value) {
+      const node = el(selector);
+      if (node && node.textContent !== String(value)) {
+        node.textContent = value;
+        node.classList.add('updated');
+        // Remove a classe após a animação (700ms)
+        setTimeout(() => node.classList.remove('updated'), 700);
+      } else if (node) {
+        // Garante que o valor esteja correto mesmo se for o mesmo
+        node.textContent = value;
+      }
+    }
+
     const uiAvatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=256&rounded=true&background=17416b&color=fff`;
 
     // Inicialização
     document.addEventListener('DOMContentLoaded', async () => {
+      loadTheme(); // Carrega o tema antes de tudo
       await loadTeam();
+      DEMO_USER_NAME = members[0]?.nome || 'Usuário Demo'; // Define o usuário da demo
+      generateExamplePosts(); // ✅ Gera posts de exemplo
       bindActions();
-      render();
+      
+      // Renderiza a view inicial correta
+      render(); 
+      renderFeed();
+      updateViewUI();
     });
 
     async function loadTeam(){
@@ -211,15 +547,199 @@
     }
 
     function bindActions(){
+      // Ações Admin
       el('#search').addEventListener('input', render);
       el('#sortPoints').addEventListener('click', () => { members.sort((a,b)=> (points[b.nome]||0)-(points[a.nome]||0)); render(); });
       el('#shuffle').addEventListener('click', () => { members.sort(()=> Math.random()-.5); render(); });
       el('#addDemoPoints').addEventListener('click', () => { for(const n of Object.keys(points)) points[n]+=50; render(); });
       el('#askBtn').addEventListener('click', askAI);
       el('#clearBtn').addEventListener('click', () => { el('#question').value=''; el('#answer').hidden=true; });
+      el('#themeToggle').addEventListener('click', toggleTheme);
+
+      // ✅ NOVOS BINDINGS (Feed e Modal)
+      el('#view-toggle').addEventListener('click', toggleView);
+      el('#showPostModalBtn').addEventListener('click', () => showPostModal(true));
+      el('#modal-close').addEventListener('click', () => showPostModal(false));
+      
+      document.querySelectorAll('.post-option').forEach(btn => {
+        btn.addEventListener('click', handleCreatePost);
+      });
     }
 
+    // =============================
+    // 🌙 Funções do Tema
+    // =============================
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.dataset.theme = savedTheme;
+      el('#themeToggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.dataset.theme;
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = nextTheme;
+      localStorage.setItem('theme', nextTheme);
+      el('#themeToggle').textContent = nextTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // =============================
+    // ✅ NOVAS FUNÇÕES - Troca de View
+    // =============================
+    function toggleView() {
+      currentView = (currentView === 'admin') ? 'colaborator' : 'admin';
+      updateViewUI();
+    }
+    
+    function updateViewUI() {
+      const isAdmin = currentView === 'admin';
+      el('#admin-view').style.display = isAdmin ? 'block' : 'none';
+      el('#collaborator-view').style.display = isAdmin ? 'none' : 'block';
+      
+      if (isAdmin) {
+        el('#view-toggle').textContent = 'Visão: Admin (clique p/ mudar)';
+        render(); // Garante que a view de admin esteja atualizada
+      } else {
+        el('#view-toggle').textContent = 'Visão: Colaborador (clique p/ mudar)';
+        renderFeed(); // Garante que o feed esteja atualizado
+      }
+    }
+
+    // =============================
+    // ✅ NOVAS FUNÇÕES - Modal e Feed
+    // =============================
+    function showPostModal(show) {
+      el('#post-modal').style.display = show ? 'flex' : 'none';
+    }
+    
+    function handleCreatePost(e) {
+      const btn = e.currentTarget;
+      const type = btn.dataset.type;
+      const pointsVal = parseInt(btn.dataset.points, 10);
+      const promptMsg = btn.dataset.prompt;
+      const title = btn.querySelector('small').previousSibling.textContent.trim();
+
+      const description = prompt(promptMsg, '');
+      
+      if (!description) {
+        alert('Criação de post cancelada.');
+        return;
+      }
+      
+      // Adiciona os pontos ao usuário da demo
+      addPoints(DEMO_USER_NAME, pointsVal);
+      
+      // Cria a postagem
+      const post = {
+        id: Date.now(),
+        author: DEMO_USER_NAME,
+        type: type,
+        title: title,
+        description: description,
+        points: pointsVal,
+        timestamp: new Date()
+      };
+      
+      // Adiciona no início do feed
+      feedPosts.unshift(post);
+      
+      // Fecha o modal e atualiza o feed
+      showPostModal(false);
+      renderFeed();
+    }
+    
+    function renderFeed() {
+      const cont = el('#feed-container');
+      cont.innerHTML = ''; // Limpa o feed
+      
+      if (feedPosts.length === 0) {
+        cont.innerHTML = '<p style="color:var(--muted); text-align:center;">O feed está vazio. Crie sua primeira postagem!</p>';
+        return;
+      }
+      
+      for (const post of feedPosts) {
+        const author = members.find(m => m.nome === post.author);
+        if (!author) continue; // Ignora se o autor não for encontrado
+        
+        const item = document.createElement('article');
+        item.className = 'card feed-item';
+        item.innerHTML = `
+          <div class="feed-header">
+            <img class="feed-avatar" src="${uiAvatar(author.nome)}" alt="${author.nome}" />
+            <div>
+              <div class="feed-name">${author.nome}</div>
+              <div class="feed-role">${author.cargo || 'Membro da Equipe'}</div>
+            </div>
+          </div>
+          <div class="feed-content">
+            <p>${post.title}</p>
+            <h3>${post.description}</h3>
+            <div class="feed-points" title="Pontos de gamificação">
+              🏆 +${post.points} pts
+            </div>
+          </div>
+        `;
+        cont.appendChild(item);
+      }
+    }
+
+    function generateExamplePosts() {
+      if (members.length === 0) return;
+
+      const randMember = () => members[Math.floor(Math.random() * members.length)].nome;
+      
+      feedPosts = [
+        {
+          id: Date.now() - 50000,
+          author: randMember(),
+          type: 'event_speaker',
+          title: 'Fui em um evento como palestrante',
+          description: 'Palestra sobre "IA Generativa no Varejo" na BrazilJS Conf',
+          points: 200,
+          timestamp: new Date(Date.now() - 50000)
+        },
+        {
+          id: Date.now() - 150000,
+          author: randMember(),
+          type: 'course',
+          title: 'Concluí um novo curso/certificação',
+          description: 'Certificação "AWS Cloud Practitioner"',
+          points: 50,
+          timestamp: new Date(Date.now() - 150000)
+        },
+        {
+          id: Date.now() - 300000,
+          author: randMember(),
+          type: 'book',
+          title: 'Terminei um livro',
+          description: '"O Problema dos 3 Corpos" de Cixin Liu',
+          points: 30,
+          timestamp: new Date(Date.now() - 300000)
+        },
+        {
+          id: Date.now() - 600000,
+          author: randMember(),
+          type: 'education_start',
+          title: 'Comecei uma nova fase acadêmica',
+          description: 'Pós-graduação em Data Science & Analytics',
+          points: 75,
+          timestamp: new Date(Date.now() - 600000)
+        },
+      ];
+      
+      // Adiciona os pontos dos posts de exemplo aos totais
+      for(const post of feedPosts) {
+        // Usa uma função "silenciosa" para não disparar o render
+        points[post.author] = (points[post.author] || 0) + post.points;
+      }
+    }
+
+
+    // =============================
+    // 🎨 Renderização (ADMIN)
+    // =============================
     function render(){
+      // Esta função agora renderiza APENAS a view de ADMIN
       const q = el('#search').value?.toLowerCase()||'';
       const list = members.filter(m =>
         !q || m.nome.toLowerCase().includes(q) ||
@@ -227,15 +747,18 @@
         (m.competencias||[]).join(' ').toLowerCase().includes(q)
       );
 
-      // KPIs
-      el('#kpi-members').textContent = members.length;
+      // KPIs (usando updateText para animação)
+      updateText('#kpi-members', members.length);
       const sum = Object.values(points).reduce((a,b)=>a+b,0);
-      el('#kpi-total').textContent = sum.toLocaleString('pt-BR') + ' pts';
+      updateText('#kpi-total', sum.toLocaleString('pt-BR') + ' pts');
       const top = [...members].sort((a,b)=> (points[b.nome]||0)-(points[a.nome]||0))[0];
-      el('#kpi-top').textContent = top? `Top 1: ${top.nome} (${points[top.nome]} pts)`: 'Top 1: —';
-      el('#visibleCount').textContent = `${list.length} visíveis`;
+      updateText('#kpi-top', top? `Top 1: ${top.nome} (${points[top.nome]} pts)`: 'Top 1: —');
+      updateText('#visibleCount', `${list.length} visíveis`);
 
-      // Cards
+      // Ranking Top 3
+      renderRanking();
+
+      // Cards da equipe (lista filtrada)
       const wrap = el('#team');
       wrap.innerHTML = '';
       for(const m of list){
@@ -265,11 +788,55 @@
         `;
         wrap.appendChild(card);
       }
+      updateText('#rankLastUpdate', `Atualizado agora • ${new Date().toLocaleTimeString('pt-BR')}`);
+    }
+
+    function renderRanking(){
+      const cont = el('#ranking');
+      cont.innerHTML = '';
+      const sorted = [...members].sort((a,b)=> (points[b.nome]||0)-(points[a.nome]||0));
+      // Alterado para Top 3
+      const top3 = sorted.slice(0,3); 
+
+      top3.forEach((m, idx) => {
+        const pos = idx + 1;
+        const p = points[m.nome]||0;
+        const item = document.createElement('div');
+        item.className = 'rank-item';
+
+        // medalha ou posição
+        let badgeHTML = '';
+        if(pos===1){
+          badgeHTML = `<div class="rank-medal medal-gold" title="Ouro">🥇</div>`;
+        }else if(pos===2){
+          badgeHTML = `<div class="rank-medal medal-silver" title="Prata">🥈</div>`;
+        }else if(pos===3){
+          badgeHTML = `<div class="rank-medal medal-bronze" title="Bronze">🥉</div>`;
+        }else{
+          // Este else não será mais usado no Top 3, mas mantido por segurança
+          badgeHTML = `<div class="rank-pos">${pos}º</div>`;
+        }
+
+        item.innerHTML = `
+          ${badgeHTML}
+          <img class="rank-avatar" src="${uiAvatar(m.nome)}" alt="${m.nome}" />
+          <div style="display:flex; flex-direction:column">
+            <span class="rank-name">${m.nome}</span>
+            <span class="role">${m.cargo || ''}</span>
+          </div>
+          <span class="rank-points">${p} pts</span>
+        `;
+        cont.appendChild(item);
+      });
     }
 
     function addPoints(name, delta){
       points[name] = (points[name]||0) + delta;
-      render();
+      
+      // ✅ ATUALIZAÇÃO: Só renderiza a view que estiver ativa
+      if (currentView === 'admin') {
+        render();
+      }
     }
 
     async function askAI(){
@@ -287,7 +854,8 @@
         if(!res.ok) throw new Error('Falha na consulta');
         const data = await res.json();
         queriesToday++;
-        el('#kpi-queries').textContent = String(queriesToday);
+        // Animação no contador de queries
+        updateText('#kpi-queries', String(queriesToday)); 
         ans.textContent = data.resposta || '(sem resposta)';
       }catch(e){
         ans.textContent = 'Erro ao consultar a IA. Verifique se a API em http://localhost:8000 está ativa e com CORS liberado.';
